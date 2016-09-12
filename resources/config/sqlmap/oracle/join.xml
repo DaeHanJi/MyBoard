@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board.JoinDAO">
+	<resultMap type="join" id="joinMap">
+		<result column="user_id" property="userId"/>
+		<result column="user_password" property="userPassword"/>
+		<result column="user_name" property="userName"/>
+		<result column="email_id" property="emailId"/>
+		<result column="email_dom_id" property="emailDomId"/>
+		<result column="code_name" property="codeName"/>
+		<result column="confirm" property="confirm"/>
+	</resultMap>
+	
+	<select id="selectJoin" resultMap="joinMap">
+		select m.user_id user_id, m.user_password user_password, m.user_name user_name, j.code_name code_name, m.email_id email_id, m.email_dom_id email_dom_id,m.confirm confirm 
+          from t86_member m,(select code_name, order_no
+                               from t86_code
+                              where group_code = 'email') j
+         where m.email_dom_id = order_no
+         order by m.user_id
+	</select>
+	<select id="selectJoinOne" resultMap="joinMap" parameterType="string">
+		select m.user_id user_id, m.user_password user_password, m.user_name user_name, j.code_name code_name, m.email_id email_id, m.email_dom_id email_dom_id,m.confirm confirm 
+          from t86_member m,(select code_name, order_no
+                               from t86_code
+                              where group_code = 'email') j
+         where m.email_dom_id = order_no
+           and m.user_id=#{userId}
+	</select>	
+	<insert id="insertJoin" parameterType="join">
+		insert into t86_member ( user_id, user_password, user_name, email_id, email_dom_id)
+        values (#{userId} , #{userPassword}, #{userName}, #{emailId}, #{emailDomId})
+  	</insert>
+	<delete id="deleteJoin" parameterType = "string">
+		delete
+          from t86_member
+         where user_id = #{userId}
+	</delete>
+	
+	
+</mapper>
